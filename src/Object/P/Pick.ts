@@ -13,11 +13,15 @@ type _Pick<O extends object, Path extends Tuple<Index>, I extends Iteration = It
   ? {
       [K in keyof Picked]:
         Picked[K] extends infer Prop          // Needed for the below to be distributive
-        ? Prop extends object                 // > If it's an object
-          ? Pos<I> extends EndOf<Path>        // & If it's the target
-            ? Prop                            // 1-1: Pick it
-            : _Pick<Prop, Path, Next<I>>      // 1-0: Continue diving
-          : Prop                              // 0: Pick property
+        ? Pos<I> extends EndOf<Path>          // If it's the target
+          ? Prop                              //   Pick it
+          : Prop extends (infer A)[]          // Else, if it's an array
+            ? A extends object                //   If it's an array of objects
+              ? _Pick<A, Path, Next<I>>[]     //     Continue diving into array items
+              : Prop                          //   Else, pick property for unions
+            : Prop extends object             // Else, if it's an object
+              ? _Pick<Prop, Path, Next<I>>    //   Continue diving
+              : Prop                          // Else, pick property for unions
         : never
     }
   : never
