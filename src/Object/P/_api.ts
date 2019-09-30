@@ -1,5 +1,6 @@
 export {Merge} from './Merge'
 export {Omit} from './Omit'
 export {Pick} from './Pick'
+export {PickA} from './PickA'
 export {Readonly} from './Readonly'
 export {Update} from './Update'
